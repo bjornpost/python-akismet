@@ -81,13 +81,17 @@ DEFAULTAGENT = 'Python Interface by Fuzzyman/%s'
 
 isfile = os.path.isfile
 
-urllib2 = None
+_urllib = None
+
 try:
     from google.appengine.api import urlfetch
 except ImportError:
-    import urllib2
+    try:
+        import urllib.request as _urllib # py3
+    except ImportError:
+        import urllib2 as _urllib # py2
 
-if urllib2 is None:
+if _urllib is None:
     def _fetch_url(url, data, headers):
         req = urlfetch.fetch(url=url, payload=data, method=urlfetch.POST, headers=headers)
         if req.status_code == 200:
@@ -96,8 +100,8 @@ if urllib2 is None:
                         (url, req.status_code))
 else:
     def _fetch_url(url, data, headers):
-        req = urllib2.Request(url, data, headers)
-        h = urllib2.urlopen(req)
+        req = _urllib.Request(url, data, headers)
+        h = _urllib.urlopen(req)
         resp = h.read()
         return resp
 
