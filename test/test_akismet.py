@@ -113,7 +113,7 @@ def main():
     req = getrequest(valuelist)
     cgiprint(serverline)
     cgiprint()
-    print header
+    print(header)
     #
     if req['comment'].strip():
         result = '<br><br>%s<br><br>' % results(req)
@@ -124,13 +124,13 @@ def main():
     for key, val in req.items():
         rep['**%s**' % key] = val.strip()
     rep['**scriptname**'] = os.environ['SCRIPT_NAME']
-    print replace(form, rep)
-    print footer
+    print(replace(form, rep))
+    print(footer)
 
 
 if __name__ == '__main__':
     if not 'SCRIPT_NAME' in os.environ:
-        print 'This script must be run as a CGI'
+        print('This script must be run as a CGI')
     else:
         main()
 
