@@ -218,7 +218,7 @@ class Akismet(object):
             except KeyError:
                 raise AkismetError("No 'user_agent' supplied")
             data['user_agent'] = val
-        #
+        
         data.setdefault('referrer', os.environ.get('HTTP_REFERER', 'unknown'))
         data.setdefault('permalink', '')
         data.setdefault('comment_type', 'comment')
@@ -229,10 +229,8 @@ class Akismet(object):
         data.setdefault('SERVER_ADMIN', os.environ.get('SERVER_ADMIN', ''))
         data.setdefault('SERVER_NAME', os.environ.get('SERVER_NAME', ''))
         data.setdefault('SERVER_PORT', os.environ.get('SERVER_PORT', ''))
-        data.setdefault('SERVER_SIGNATURE', os.environ.get('SERVER_SIGNATURE',
-            ''))
-        data.setdefault('SERVER_SOFTWARE', os.environ.get('SERVER_SOFTWARE',
-            ''))
+        data.setdefault('SERVER_SIGNATURE', os.environ.get('SERVER_SIGNATURE', ''))
+        data.setdefault('SERVER_SOFTWARE', os.environ.get('SERVER_SOFTWARE', ''))
         data.setdefault('HTTP_ACCEPT', os.environ.get('HTTP_ACCEPT', ''))
         data.setdefault('blog', self.blog_url)
 
@@ -321,15 +319,13 @@ class Akismet(object):
         # we *don't* trap the error here
         # so if akismet is down it will raise an HTTPError or URLError
         headers = {'User-Agent' : self.user_agent}
-        # urlencode() chokes on non-ASCII input unless doseq= is set (2.6).
-        # None of our values should be sequences, so it shouldn't matter.
-        resp = self._safeRequest(url, urlencode(data, doseq=True), headers)
+        resp = self._safeRequest(url, urlencode(data).encode('ascii'), headers)
         if DEBUG:
             return resp
         resp = resp.lower()
-        if resp == 'true':
+        if resp == b'true':
             return True
-        elif resp == 'false':
+        elif resp == b'false':
             return False
         else:
             # NOTE: Happens when you get a 'howdy wilbur' response !
