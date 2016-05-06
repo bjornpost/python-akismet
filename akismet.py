@@ -190,7 +190,7 @@ class Akismet(object):
         # so if akismet is down it will raise an HTTPError or URLError
         headers = {'User-Agent' : self.user_agent}
         resp = self._safeRequest(url, urlencode(data).encode('ascii'), headers)
-        if resp.lower() == 'valid':
+        if resp.lower() == b'valid':
             return True
         else:
             return False
